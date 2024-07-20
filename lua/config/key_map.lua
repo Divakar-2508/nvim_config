@@ -54,3 +54,5 @@ end)
 vim.keymap.set("n", "<leader>ch", function()
 	vim.lsp.buf.hover()
 end)
+-- workspace symbols
+vim.keymap.set("n", "<leader>cs", "<cmd>Trouble symbols toggle focus=true<cr>")
