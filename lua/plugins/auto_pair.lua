@@ -1,3 +1,6 @@
 return {
-	"Townk/vim-autoclose",
+    'm4xshen/autoclose.nvim',
+    config = function()
+        require("autoclose").setup {}
+    end
 }

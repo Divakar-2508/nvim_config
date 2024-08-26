@@ -1,7 +1,7 @@
 vim.g.mapleader = " "
 -- common mappings
-vim.keymap.set({ "i", "n" }, "<C-s>", "<cmd>w<CR>") -- save file
-vim.keymap.set({ "n", "v" }, "<C-c>", '"+y') -- copy selection
+vim.keymap.set({ "i", "n" }, "<C-s>", "<cmd>w<CR>")                                         -- save file
+vim.keymap.set({ "n", "v" }, "<C-c>", '"+y')                                                -- copy selection
 vim.keymap.set("n", "<leader>hc", "<cmd>nohlsearch<CR>", { noremap = true, silent = true }) -- Clear search highlighting
 -- swap line up
 vim.keymap.set("n", "<A-Up>", ":m .-2<CR>==")
@@ -13,14 +13,17 @@ vim.keymap.set("i", "<A-Down>", "<Esc>:m .+1<CR>==gi")
 vim.keymap.set("v", "<A-Down>", ":m '<+1<CR>gv=gc")
 -- code format
 vim.keymap.set("n", "<leader>cf", function()
-	vim.lsp.buf.format()
+    vim.lsp.buf.format()
 end)
 -- format on save
 vim.api.nvim_create_autocmd("BufWritePre", {
-	callback = function()
-		vim.lsp.buf.format()
-	end,
+    callback = function()
+        vim.lsp.buf.format()
+    end,
 })
+vim.api.nvim_set_keymap('t', '<Leader><ESC>', '<C-\\><C-n>', { noremap = true })
+-- easy ctrls
+
 
 -- telescope mapping
 -- file finder
@@ -32,27 +35,41 @@ vim.keymap.set("n", "<leader>fw", "<cmd>Telescope live_grep<CR>")
 local is_open = false
 
 function ToggleNeotree()
-	if is_open then
-		vim.cmd("Neotree close")
-	else
-		vim.cmd("Neotree reveal")
-	end
-	is_open = not is_open
+    if is_open then
+        vim.cmd("Neotree focus")
+    else
+        vim.cmd("Neotree reveal")
+    end
+    is_open = not is_open
 end
 
 -- open and close explorer
 vim.keymap.set("n", "<leader>e", function()
-	ToggleNeotree()
+    ToggleNeotree()
 end)
+
+vim.keymap.set("n", "<c-n>", function()
+    vim.cmd("Neotree close")
+    is_open = not is_open
+end)
+
 
 -- lsp, code mapping
 -- code actions
 vim.keymap.set("n", "<leader>ca", function()
-	vim.lsp.buf.code_action()
+    vim.lsp.buf.code_action()
 end)
 -- hover actions
 vim.keymap.set("n", "<leader>ch", function()
-	vim.lsp.buf.hover()
+    vim.lsp.buf.hover()
 end)
 -- workspace symbols
-vim.keymap.set("n", "<leader>cs", "<cmd>Trouble symbols toggle focus=true<cr>")
+vim.keymap.set("n", "<leader>ws", "<cmd>Trouble symbols toggle focus=true<cr>")
+
+-- terminal
+vim.keymap.set("t", "<A-i>", function()
+    vim.cmd("ToggleTerm")
+end)
+vim.keymap.set("n", "<A-i>", function()
+    vim.cmd("ToggleTerm direction=float")
+end)

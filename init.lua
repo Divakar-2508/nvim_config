@@ -15,5 +15,11 @@ opt.cursorline = true
 opt.clipboard = "unnamedplus"
 opt.expandtab = true
 
+vim.api.nvim_create_autocmd("VimEnter", {
+    callback = function()
+        vim.cmd("highlight Normal ctermbg=none guibg=none")
+    end
+})
+
 require("config.lazy")
 require("config.key_map")
