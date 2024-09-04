@@ -1,11 +1,11 @@
 return {
     "folke/trouble.nvim",
-    opts = {},
+    opts = {}, -- for default options, refer to the configuration section for custom setup.
     cmd = "Trouble",
     keys = {
         {
             "<leader>xx",
-            "<cmd>Trouble diagnostics toggle<cr>",
+            "<cmd>Trouble diagnostics toggle focus=true auto_close=true<cr>",
             desc = "Diagnostics (Trouble)",
         },
         {
@@ -33,5 +33,5 @@ return {
             "<cmd>Trouble qflist toggle<cr>",
             desc = "Quickfix List (Trouble)",
         },
-    }
+    },
 }

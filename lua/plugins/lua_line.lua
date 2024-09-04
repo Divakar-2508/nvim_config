@@ -1,7 +1,7 @@
 return {
     "nvim-lualine/lualine.nvim",
     dependencies = "folke/trouble.nvim",
-    opts = function(_, opts)
+    opts = function(_, _)
         local trouble = require("trouble")
         local symbols = trouble.statusline({
             mode = "lsp_document_symbols",
