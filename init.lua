@@ -33,7 +33,7 @@ dofile(vim.g.base46_cache .. "defaults")
 dofile(vim.g.base46_cache .. "statusline")
 
 require "nvchad.autocmds"
-
+require 'nvim-treesitter.install'.compilers = { "clang" }
 vim.schedule(function()
   require "mappings"
 end)
