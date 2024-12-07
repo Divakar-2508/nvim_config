@@ -1,9 +1,31 @@
 return {
-    {
-        "m4xshen/autoclose.nvim",
+    {   "catppuccin/nvim", 
+        name = "catppuccin", 
+        priority = 1000,
         config = function()
-            require("autoclose").setup({
-                map_cr = true,
+            vim.cmd('colorscheme catppuccin')
+        end
+    },
+    {
+        'windwp/nvim-autopairs',
+        event = "InsertEnter",
+        config = true
+        -- use opts = {} for passing setup options
+        -- this is equivalent to setup({}) function
+    },
+    {
+        'stevearc/conform.nvim',
+        opts = {},
+        config = function()
+            require("conform").setup({
+                formatters_by_ft = {
+                    lua = { "stylua" },
+                    rust = { "rustfmt", lsp_format = "fallback" },
+                },
+                format_on_save = {
+                    timeout_ms = 500,
+                    lsp_format = "fallback",
+                }
             })
         end
     },
@@ -90,7 +112,7 @@ return {
             local fzf = require("fzf-lua")
             vim.keymap.set("n", "<leader>f", fzf.files, {desc = "Fuzzy search files"})
             vim.keymap.set("n", "<leader>s", fzf.lsp_workspace_symbols, {desc = "Search workspace symbols"})
-            vim.keymap.set("n", "<leader>g", fzf.grep, {desc = "Search with ripgrep"})
+            vim.keymap.set("n", "<leader>rg", fzf.grep, {desc = "Search with ripgrep"})
             vim.keymap.set("n", "<leader>b", fzf.buffers, {desc = "Switch buffers"})
             vim.keymap.set("n", "<leader>l", fzf.live_grep, {desc = "Live grep search"})
             vim.keymap.set("n", "<leader>t", fzf.tags, {desc = "Search tags"})
@@ -119,13 +141,6 @@ return {
                             scope_incremental = "grc",
                             node_decremental = "grm"
                         }
-                    },
-                    indent = {
-                        enable = true,
-                        disable = {},
-                    },
-                    matchup = {
-                        enable = true, 
                     },
                 }
             )
@@ -165,14 +180,19 @@ return {
         end,
         config = function()
             local lspconfig = require("lspconfig")
-
-            lspconfig.rust_analyzer.setup {
-                settings = {
-                    ["rust-analyzer"] = {
-                        inlayHints = { enable = true }
-                    }
-                }
-            }
-        end
-    }
+            lspconfig.rust_analyzer.setup {}
+        end,
+	settings = {
+		["rust-analyzer"] = {
+			checkOnSave = true,
+			command = "cargo clippy",
+		},
+	}
+    },
+    -- {
+    --    'mrcjkb/rustaceanvim',
+    --    version = '^5', -- Recommended
+    --    lazy = false, -- This plugin is already lazy
+    -- }
 }
+

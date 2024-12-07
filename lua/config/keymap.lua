@@ -4,6 +4,7 @@ vim.keymap.set("n", "<Esc>", ":noh<CR>", { desc = "Clear search highlighting", s
 
 vim.keymap.set("n", "<Tab>", ":bnext<CR>", { silent = true })
 vim.keymap.set("n", "<S-Tab>", ":bprevious<CR>", { silent = true })
+vim.keymap.set("n", "<leader>x", ":bd<CR>", { silent = true })
 
 local inlay_hints = false
 -- Function to toggle inlay hints
@@ -57,4 +58,31 @@ vim.api.nvim_create_autocmd("LspAttach", {
   end,
 })
 
+-- Function to set up keybindings after LSP attaches
+function lsp_bindings()
+    -- Helper function to simplify keymap definitions
+    local nmap = function(keys, func, desc)
+        vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
+    end
+
+    -- LSP-related keybindings
+    nmap("gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
+    nmap("gr", vim.lsp.buf.references, "[G]oto [R]eferences")
+    nmap("gi", vim.lsp.buf.implementation, "[G]oto [I]mplementation")
+    nmap("K", vim.lsp.buf.hover, "Hover Documentation")
+    nmap("<C-k>", vim.lsp.buf.signature_help, "Signature Help")
+    nmap("<leader>rn", vim.lsp.buf.rename, "[R]e[N]ame")
+    nmap("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
+
+    -- Diagnostics keybindings
+    nmap("[d", vim.diagnostic.goto_prev, "Go to Previous Diagnostic")
+    nmap("]d", vim.diagnostic.goto_next, "Go to Next Diagnostic")
+    nmap("<leader>e", vim.diagnostic.open_float, "[E]rror Details")
+    nmap("<leader>q", vim.diagnostic.setloclist, "[Q]uickfix Diagnostics List")
+
+    -- Format the buffer
+    nmap("<leader>gf", vim.lsp.buf.format, "[F]ormat Document")
+end
+
+vim.api.nvim_create_autocmd("LspAttach", { callback = lsp_bindings })
 

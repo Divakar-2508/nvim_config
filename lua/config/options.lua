@@ -1,4 +1,3 @@
-vim.cmd('colorscheme wildcharm')
 
 vim.opt.fillchars = { eob = " " }  -- Replace tildes with spaces on empty lines
 
@@ -27,13 +26,6 @@ vim.opt.number = true      -- Display line numbers
 vim.opt.relativenumber = true  -- Display relative line numbers
 vim.opt.scrolloff = 8      -- Keep 8 lines above and below the cursor when scrolling
 
--- Auto-indentation
-vim.opt.smartindent = true  -- Enable smart indentation
-vim.opt.autoindent = true   -- Enable automatic indentation
-vim.opt.cindent = true       -- Enable C-like indentation for braces
-vim.opt.formatoptions:remove("o")  -- Don't insert a new line when opening a brace
-vim.opt.formatoptions:append("c") -- Enable smart indent for comments/braces
-
 -- Enable clipboard support
 vim.opt.clipboard = "unnamedplus"  -- Use system clipboard for copy/paste
 
@@ -49,16 +41,3 @@ vim.opt.cursorline = true -- Highlight the current line
 -- Enable clipboard support for copy-pasting
 vim.opt.clipboard = "unnamedplus" -- Use the system clipboard
 
-vim.api.nvim_set_keymap("i", "<CR>", [[v:lua.CustomEnterKey()]], { expr = true, noremap = true })
-function _G.CustomEnterKey()
-    local line = vim.fn.getline(".")
-    local col = vim.fn.col(".") - 1
-    local char_before = line:sub(col, col)
-
-    -- Check if the character before the cursor is `{`
-    if char_before == "{" then
-        return "<CR><Esc>O"
-    else
-        return "<CR>"
-    end
-end
