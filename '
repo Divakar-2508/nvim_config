@@ -64,8 +64,9 @@ end
 
 vim.api.nvim_create_autocmd("LspAttach", { callback = lsp_bindings })
 
+-- code runner
 
-function compile_and_run_cpp()
+local function compile_and_run_cpp()
   -- Get the current file name
   local file_name = vim.fn.expand("%:t") -- Get the file name with extension
   local file_base = vim.fn.expand("%:r") -- Get the file name without extension
@@ -73,9 +74,9 @@ function compile_and_run_cpp()
   -- Check if the file is a C++ file
   if vim.bo.filetype == "cpp" then
     -- Open a terminal and run the command
-    vim.cmd("term") -- Open a terminal in a split window
+    vim.cmd("split | term") -- Open a terminal in a split window
     vim.fn.chansend(vim.b.terminal_job_id,
-      string.format("clang++ --std=c++23 %s -o %s.exe && %s.exe\n", file_name, file_base, file_base))
+      string.format("clang++ --std=c++23 %s -o %s.exe && ./%s.exe\n", file_name, file_base, file_base))
   else
     print("This shortcut works only for C++ files.")
   end
