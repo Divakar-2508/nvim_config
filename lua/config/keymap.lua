@@ -18,7 +18,6 @@ vim.keymap.set(
 	"<esc><cmd>lua require('Comment.api').toggle.linewise(vim.fn.visualmode())<CR>",
 	{ desc = "Toggle Line Comment" }
 )
-
 -- Block Comment
 vim.keymap.set(
 	"n",
@@ -33,8 +32,14 @@ vim.keymap.set(
 	{ desc = "Toggle Block Comment" }
 )
 
+-- Window Height
+vim.keymap.set("n", "<M-Up>", ":resize +2<CR>", { desc = "Increase window height" })
+vim.keymap.set("n", "<M-Down>", ":resize -2<CR>", { desc = "Decrease window height" })
+vim.keymap.set("n", "<M-Right>", ":vertical resize +2<CR>", { desc = "Increase window width" })
+vim.keymap.set("n", "<M-Left>", ":vertical resize -2<CR>", { desc = "Decrease window width" })
+
+-- inlay_hints
 local inlay_hints = false
--- Function to toggle inlay hints
 local function toggle_inlay_hints()
 	local bufnr = vim.api.nvim_get_current_buf()
 
