@@ -1,6 +1,8 @@
 vim.g.mapleader = " "
 --clear highlight
 vim.keymap.set("n", "<Esc>", ":noh<CR>", { desc = "Clear search highlighting", silent = true })
+vim.keymap.set("t", "<Esc>", "<C-\\><C-N>")
+-- vim.keymap.set("n", "cc", "ggVGy")
 
 vim.keymap.set("n", "<Tab>", ":bnext<CR>", { silent = true })
 vim.keymap.set("n", "<S-Tab>", ":bprevious<CR>", { silent = true })
@@ -33,10 +35,10 @@ vim.keymap.set(
 )
 
 -- Window Height
-vim.keymap.set("n", "<M-Up>", ":resize +2<CR>", { desc = "Increase window height" })
+--[[ vim.keymap.set("n", "<M-Up>", ":resize +2<CR>", { desc = "Increase window height" })
 vim.keymap.set("n", "<M-Down>", ":resize -2<CR>", { desc = "Decrease window height" })
 vim.keymap.set("n", "<M-Right>", ":vertical resize +2<CR>", { desc = "Increase window width" })
-vim.keymap.set("n", "<M-Left>", ":vertical resize -2<CR>", { desc = "Decrease window width" })
+vim.keymap.set("n", "<M-Left>", ":vertical resize -2<CR>", { desc = "Decrease window width" }) ]]
 
 -- inlay_hints
 local inlay_hints = false
@@ -66,12 +68,10 @@ local function toggle_inlay_hints()
 	end
 end
 
--- Bind .h to toggle inlay hints in normal mode
 vim.keymap.set("n", ".h", function()
 	toggle_inlay_hints()
 end, { noremap = true, silent = true })
 
--- Setup LspAttach to handle LSP server readiness
 vim.api.nvim_create_autocmd("LspAttach", {
 	callback = function(event)
 		local bufnr = event.buf
@@ -80,7 +80,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
 			return
 		end
 
-		-- Check if the LSP server supports inlay hints
 		local capabilities = clients[1].server_capabilities
 		if capabilities.inlayHintProvider then
 			print("Inlay hints are supported. Use .h to toggle.")
@@ -90,9 +89,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 	end,
 })
 
--- Function to set up keybindings after LSP attaches
 function lsp_bindings()
-	-- Helper function to simplify keymap definitions
 	local nmap = function(keys, func, desc)
 		vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
 	end
@@ -117,3 +114,44 @@ function lsp_bindings()
 end
 
 vim.api.nvim_create_autocmd("LspAttach", { callback = lsp_bindings })
+
+local function compile_and_run()
+	local file_path = vim.fn.expand("%:p:h") -- Get the directory of the current file
+	local file_name_ext, file_type = vim.fn.expand("%:t"), vim.bo.filetype
+	local file_name = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ":t:r")
+
+	local term_bufnr = nil
+	for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+		if vim.bo[bufnr].buftype == "terminal" then
+			term_bufnr = bufnr
+			break
+		end
+	end
+
+	if not term_bufnr then
+		vim.cmd("term")
+		term_bufnr = vim.api.nvim_get_current_buf()
+	else
+		vim.api.nvim_set_current_buf(term_bufnr)
+	end
+
+	local command = ({
+		cpp = string.format(
+			"cd %s; clang++ --std=c++23 %s -o %s; ./%s",
+			file_path,
+			file_name_ext,
+			file_name,
+			file_name
+		),
+		java = string.format("cd %s; javac %s; java %s", file_path, file_name_ext, file_name),
+		c = string.format("cd %s; clang %s -o %s; ./%s", file_path, file_name_ext, file_name, file_name),
+	})[file_type]
+
+	if command then
+		vim.fn.chansend(vim.api.nvim_buf_get_var(term_bufnr, "terminal_job_id"), command .. "\n")
+	else
+		print("Unsupported file type.")
+	end
+end
+
+vim.keymap.set("n", "<leader>cr", compile_and_run, { desc = "Compile & Run" })

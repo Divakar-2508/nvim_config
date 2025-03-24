@@ -1,18 +1,23 @@
 return {
 	{
-		"catppuccin/nvim",
-		name = "catppuccin",
-		priority = 1000,
+		"loctvl842/monokai-pro.nvim",
 		config = function()
-			vim.cmd("colorscheme catppuccin")
+			vim.cmd("colorscheme monokai-pro-spectrum")
 		end,
 	},
 	{
 		"windwp/nvim-autopairs",
+		lazy = true,
 		event = "InsertEnter",
 		config = true,
 		-- use opts = {} for passing setup options
 		-- this is equivalent to setup({}) function
+	},
+	{
+		"akinsho/bufferline.nvim",
+		config = function()
+			require("bufferline").setup()
+		end,
 	},
 	{
 		"stevearc/conform.nvim",
@@ -22,6 +27,15 @@ return {
 				formatters_by_ft = {
 					lua = { "stylua" },
 					rust = { "rustfmt", lsp_format = "fallback" },
+					html = { "prettier" },
+					css = { "prettier" },
+					csharp = { "csharpier" },
+					python = {
+						"ruff_fix",
+						"ruff_format",
+						"ruff_organize_imports",
+					},
+					asm = { "asmfmt" },
 				},
 				format_on_save = {
 					timeout_ms = 500,
@@ -31,45 +45,8 @@ return {
 		end,
 	},
 	{
-		"stevearc/oil.nvim",
-		opts = {},
-		dependencies = { { "echasnovski/mini.icons", opts = {} } },
-		config = function()
-			-- Setup oil.nvim with floating window
-			require("oil").setup({
-				float = {
-					enabled = true, -- Enable floating window for Oil
-					size = {
-						-- Define window size: width and height as percentages
-						width = 0.8, -- 80% of the screen width
-						height = 0.8, -- 80% of the screen height
-					},
-					border = "rounded",
-					winblend = 10,
-					highlights = {
-						border = "Normal",
-						background = "Normal",
-					},
-					position = {
-						row = 0.1, -- 10% from top
-						col = 0.1, -- 10% from left
-					},
-				},
-				view_options = {
-					show_hidden = true,
-					is_diagnostics_shown = false,
-				},
-			})
-
-			-- Set the keymap for opening the parent directory with Oil
-			vim.keymap.set("n", "-", function()
-				require("oil").open(vim.fn.expand("%:p:h")) -- Open the current working directory
-			end, { desc = "Open parent directory with Oil" })
-		end,
-	},
-	{
 		"ibhagwan/fzf-lua",
-		dependencies = { "echasnovski/mini.icons" }, -- Optional for icons
+		dependencies = { { "echasnovski/mini.icons", opts = {} } }, -- Optional for icons
 		config = function()
 			require("fzf-lua").setup({
 				winopts = {
@@ -97,6 +74,7 @@ return {
 						cmd = "bat",
 						args = "--style=numbers,changes --color always",
 						theme = "OneHalfDark", -- Set the theme for bat
+						-- theme = "monokai-pro-spectrum",
 						config = nil, -- Set this to a custom bat config file if needed
 					},
 				},
@@ -113,6 +91,7 @@ return {
 	{
 		"nvim-treesitter/nvim-treesitter",
 		run = ":TSUpdate",
+		event = "BufReadPre",
 		config = function()
 			-- Specify the compiler for Windows
 			require("nvim-treesitter.install").compilers = { "clang" }
@@ -137,40 +116,17 @@ return {
 		end,
 	},
 	{
-		"ojroques/nvim-hardline",
-		config = function()
-			require("hardline").setup({
-				bufferline = false, -- disable bufferline
-				bufferline_settings = {
-					exclude_terminal = false, -- don't show terminal buffers in bufferline
-					show_index = false, -- show buffer indexes (not the actual buffer numbers) in bufferline
-				},
-				theme = "default", -- change theme
-				sections = { -- define sections
-					{ class = "mode", item = require("hardline.parts.mode").get_item },
-					{ class = "high", item = require("hardline.parts.git").get_item, hide = 100 },
-					{ class = "med", item = require("hardline.parts.filename").get_item },
-					"%<",
-					{ class = "med", item = "%=" },
-					{ class = "low", item = require("hardline.parts.wordcount").get_item, hide = 100 },
-					{ class = "error", item = require("hardline.parts.lsp").get_error },
-					{ class = "warning", item = require("hardline.parts.lsp").get_warning },
-					{ class = "warning", item = require("hardline.parts.whitespace").get_item },
-					{ class = "high", item = require("hardline.parts.filetype").get_item, hide = 60 },
-					{ class = "mode", item = require("hardline.parts.line").get_item },
-				},
-			})
-		end,
-	},
-	{
-		"neovim/nvim-lspconfig", -- REQUIRED: for native Neovim LSP integration
-		lazy = false, -- REQUIRED: tell lazy.nvim to start this plugin at startup
-	},
-	{
 		"williamboman/mason.nvim",
+		lazy = true,
+		cmd = "Mason",
 		config = function()
 			require("mason").setup()
 		end,
+	},
+	{
+		"williamboman/mason-lspconfig.nvim",
+		dependencies = { "williamboman/mason.nvim", "neovim/nvim-lspconfig" },
+		lazy = true,
 	},
 	{
 		"mrcjkb/rustaceanvim",
@@ -179,26 +135,58 @@ return {
 	},
 	{
 		"numToStr/Comment.nvim",
+		lazy = true,
 		config = function()
 			require("Comment").setup({})
 		end,
 	},
 	{
 		"mfussenegger/nvim-lint",
+		lazy = true,
+		event = "BufWritePost",
 		config = function()
 			local lint = require("lint")
 
-			--[[ lint.linters_by_ft = {
-                go = {  }
-            } ]]
+			-- Set up linters for different file types
+			lint.linters_by_ft = {
+				rust = { "clippy" },
+				-- cpp = { "clangtidy" },
+				python = { "ruff" },
+			}
 
+			-- Create a unique augroup
+			local lint_augroup = vim.api.nvim_create_augroup("Linting", { clear = true })
+
+			-- Auto-trigger linting on BufEnter, BufWritePost, InsertLeave
 			vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
 				group = lint_augroup,
 				callback = function()
 					lint.try_lint()
 				end,
 			})
+
+			-- Debug: Show if linting is actually running
+			vim.api.nvim_create_user_command("LintNow", function()
+				print("Running Linter...")
+				lint.try_lint()
+				print("Lint finished...")
+			end, {})
+
+			-- Run linting on startup (optional)
+			vim.defer_fn(function()
+				lint.try_lint()
+			end, 100)
 		end,
 	},
-	{ "nvim-tree/nvim-web-devicons", opts = {} },
+	{
+		"MeanderingProgrammer/render-markdown.nvim",
+		lazy = true,
+		ft = "markdown",
+		dependencies = { "nvim-treesitter/nvim-treesitter", "echasnovski/mini.icons" }, -- if you use the mini.nvim suite
+		-- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' }, -- if you use standalone mini plugins
+		-- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
+		---@module 'render-markdown'
+		---@type render.md.UserConfig
+		opts = {},
+	},
 }
