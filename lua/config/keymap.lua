@@ -4,6 +4,13 @@ vim.keymap.set("n", "<Esc>", ":noh<CR>", { desc = "Clear search highlighting", s
 vim.keymap.set("t", "<Esc>", "<C-\\><C-N>")
 -- vim.keymap.set("n", "cc", "ggVGy")
 
+-- navigate windows
+vim.keymap.set('n', '<C-q>', ':close<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<C-Left>', '<C-w>h', { noremap = true, silent = true })
+vim.keymap.set('n', '<C-Down>', '<C-w>j', { noremap = true, silent = true })
+vim.keymap.set('n', '<C-Up>', '<C-w>k', { noremap = true, silent = true })
+vim.keymap.set('n', '<C-Right>', '<C-w>l', { noremap = true, silent = true })
+
 vim.keymap.set("n", "<Tab>", ":bnext<CR>", { silent = true })
 vim.keymap.set("n", "<S-Tab>", ":bprevious<CR>", { silent = true })
 vim.keymap.set("n", "<leader>x", ":bd<CR>", { silent = true })
@@ -145,6 +152,8 @@ local function compile_and_run()
         ),
         java = string.format("cd %s; javac %s; java %s", file_path, file_name_ext, file_name),
         c = string.format("cd %s; clang %s -o %s; ./%s", file_path, file_name_ext, file_name, file_name),
+        python = string.format("cd %s; python %s", file_path, file_name_ext),
+        rust = string.format("cd %s; cargo run", file_path)
     })[file_type]
 
     if command then

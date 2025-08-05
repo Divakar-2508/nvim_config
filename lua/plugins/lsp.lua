@@ -6,9 +6,20 @@ return {
     opts = {
         servers = {
             lua_ls = {},
-            pyright = {},
+            pyright = {
+                settings = {
+                    python = {
+                        analysis = {
+                            autoSearchPaths = true,
+                            useLibraryCodeForTypes = true,
+                            diagnosticMode = "workspace",
+                            extraPaths = { "." }, -- 👈 add this
+                        },
+                    },
+                },
+            },
             html = {},
-            jdtls = {},
+            -- jdtls = {},
             clangd = {
                 cmd = {
                     "clangd",

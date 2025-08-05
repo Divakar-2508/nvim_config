@@ -82,6 +82,7 @@ return {
             local fzf = require("fzf-lua")
             vim.keymap.set("n", "<leader>f", fzf.files, { desc = "Fuzzy search files" })
             vim.keymap.set("n", "<leader>s", fzf.lsp_workspace_symbols, { desc = "Search workspace symbols" })
+            vim.keymap.set("n", "<leader>S", fzf.lsp_live_workspace_symbols, { desc = "Search live workspace symbols" })
             vim.keymap.set("n", "<leader>rg", fzf.grep, { desc = "Search with ripgrep" })
             vim.keymap.set("n", "<leader>b", fzf.buffers, { desc = "Switch buffers" })
             vim.keymap.set("n", "<leader>l", fzf.live_grep, { desc = "Live grep search" })
@@ -191,4 +192,40 @@ return {
         ---@type render.md.UserConfig
         opts = {},
     },
+    {
+        "mfussenegger/nvim-jdtls",
+        ft = "java",
+        config = function()
+            local jdtls = require("jdtls")
+            local home = os.getenv("HOME")
+            local root_markers = { ".git", "mvnw", "gradlew", "pom.xml", "build.gradle" }
+
+            local root_dir = require("jdtls.setup").find_root(root_markers) or vim.fn.getcwd()
+
+            local workspace_folder = home .. "/.cache/jdtls-workspace/" .. vim.fn.fnamemodify(root_dir, ":p:h:t")
+
+            local config = {
+                cmd = {
+                    "/usr/lib/jvm/default/bin/java",
+                    "--enable-native-access=ALL-UNNAMED",
+                    "-Declipse.application=org.eclipse.jdt.ls.core.id1",
+                    "-Dosgi.bundles.defaultStartLevel=4",
+                    "-Declipse.product=org.eclipse.jdt.ls.core.product",
+                    "-Dlog.protocol=true",
+                    "-Dlog.level=ALL",
+                    "-Xms1g",
+                    "--add-modules=ALL-SYSTEM",
+                    "--add-opens", "java.base/java.util=ALL-UNNAMED",
+                    "--add-opens", "java.base/java.lang=ALL-UNNAMED",
+                    "-jar", vim.fn.glob(home ..
+                    "/.local/share/nvim/mason/packages/jdtls/plugins/org.eclipse.equinox.launcher_*.jar"),
+                    "-configuration", home .. "/.local/share/nvim/mason/packages/jdtls/config_linux",
+                    "-data", workspace_folder,
+                },
+                root_dir = root_dir,
+            }
+
+            jdtls.start_or_attach(config)
+        end,
+    }
 }
