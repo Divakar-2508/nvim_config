@@ -5,11 +5,11 @@
 ---
 ## 📚 Table of Contents
 
-- [🖼️ Previews](#previews)
-- [✨ Plugins](#plugins)
-- [🎹 Keymaps](#keymaps)
-- [⚡️ Quick Start](#quick-start)
-- [🛠️ Tools Needed](#tools-needed)
+- [🖼️ Previews](#️-previews)
+- [✨ Plugins](#-plugins)
+- [🎹 Keymaps](#-keymaps)
+- [⚡️ Quick Start](#️-quick-start)
+- [🛠️ Tools Needed](#️-tools-needed)
 
 ---
 
