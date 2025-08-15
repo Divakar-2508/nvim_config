@@ -10,8 +10,6 @@ return {
 		lazy = true,
 		event = "InsertEnter",
 		config = true,
-		-- use opts = {} for passing setup options
-		-- this is equivalent to setup({}) function
 	},
 	{
 		"akinsho/bufferline.nvim",
@@ -46,27 +44,27 @@ return {
 	},
 	{
 		"ibhagwan/fzf-lua",
-		dependencies = { { "echasnovski/mini.icons", opts = {} } }, -- Optional for icons
+		dependencies = { { "echasnovski/mini.icons", opts = {} } },
 		config = function()
 			require("fzf-lua").setup({
 				winopts = {
-					height = 0.85, -- window height
-					width = 0.80, -- window width
-					row = 0.30, -- window row position
-					col = 0.50, -- window col position
-					border = "rounded", -- border style
+					height = 0.85,
+					width = 0.80,
+					row = 0.30,
+					col = 0.50,
+					border = "rounded",
 				},
 				files = {
 					prompt = "Files❯ ",
-					cmd = "fd --type f --hidden --follow --exclude .git", -- Use fd for file search
-					git_icons = true, -- Show git icons for files
-					file_icons = true, -- Show file type icons
+					cmd = "fd --type f --hidden --follow --exclude .git",
+					git_icons = true,
+					file_icons = true,
 				},
 				grep = {
 					rg_opts = "--column --line-number --no-heading --color=always --smart-case",
 					exact = false,
 					case_mode = "smart_case",
-					-- prompt = "Rg❯ ",
+					prompt = "Rg❯ ",
 					-- cmd = "rg --vimgrep" -- Use ripgrep for searching
 				},
 				previewers = {
@@ -75,24 +73,10 @@ return {
 						args = "--style=numbers,changes --color always",
 						theme = "OneHalfDark", -- Set the theme for bat
 						-- theme = "monokai-pro-spectrum",
-						config = nil, -- Set this to a custom bat config file if needed
+						config = nil,
 					},
 				},
 			})
-			local fzf = require("fzf-lua")
-			vim.keymap.set("n", "<leader>f", fzf.files, { desc = "Fuzzy search files" })
-			vim.keymap.set("n", "<leader>s", fzf.lsp_workspace_symbols, { desc = "Search workspace symbols" })
-			vim.keymap.set("n", "<leader>S", fzf.lsp_live_workspace_symbols, { desc = "Search live workspace symbols" })
-			vim.keymap.set("n", "<leader>rg", fzf.grep, { desc = "Search with ripgrep" })
-			vim.keymap.set("n", "<leader>b", fzf.buffers, { desc = "Switch buffers" })
-			vim.keymap.set("n", "<leader>l", fzf.live_grep, { desc = "Live grep search" })
-			vim.keymap.set("n", "<leader>t", fzf.tags, { desc = "Search tags" })
-			vim.keymap.set("n", "<leader>df", function()
-				fzf.lsp_document_symbols({
-					symbol_kind = { "Method" },
-					prompt = "Funcs❯ ",
-				})
-			end, { desc = "Search functions in current buffer" })
 		end,
 	},
 	{
@@ -103,7 +87,6 @@ return {
 			-- Specify the compiler for Windows
 			-- require("nvim-treesitter.install").compilers = { "gcc" }
 
-			-- Treesitter setup
 			require("nvim-treesitter.configs").setup({
 				ensure_installed = { "rust", "python", "lua", "cpp", "java", "c" }, -- Add any languages you need
 				highlight = {
@@ -128,16 +111,6 @@ return {
 		cmd = "Mason",
 		config = function()
 			require("mason").setup()
-		end,
-	},
-	{
-		"williamboman/mason-lspconfig.nvim",
-		dependencies = { "williamboman/mason.nvim", "neovim/nvim-lspconfig" },
-		lazy = true,
-		config = function()
-			require("mason-lspconfig").setup({
-				handlers = {},
-			})
 		end,
 	},
 	{
@@ -222,7 +195,6 @@ return {
 				return nil
 			end
 
-			-- find a sensible Java "root_dir"
 			local function find_java_root()
 				-- 1) project root markers (maven/gradle/git)
 				local found = require("jdtls.setup").find_root(root_markers)
@@ -239,14 +211,12 @@ return {
 				local pkg = package_from_buffer()
 				if pkg then
 					local pkg_path = pkg:gsub("%.", "/")
-					-- if filedir ends with the package path, strip it off to get the source root
 					local base = filedir:match("^(.*)/" .. pkg_path .. "$")
 					if base and base ~= "" then
 						return base
 					end
 				end
 
-				-- 3) fallback to the file's folder
 				return filedir
 			end
 
