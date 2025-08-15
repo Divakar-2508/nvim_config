@@ -3,15 +3,24 @@
 > A simple, personal Neovim setup focused on productivity, code clarity, and modern plugin goodness.
 
 ---
+## 📚 Table of Contents
 
-## 🖼️ Preview
+- [🖼️ Previews](#previews)
+- [✨ Plugins](#plugins)
+- [🎹 Keymaps](#keymaps)
+- [⚡️ Quick Start](#quick-start)
+- [🛠️ Tools Needed](#tools-needed)
+
+---
+
+## 🖼️ Previews
 ![main](previews/1.png)
 ![yazi](previews/2.png)
 ![fuzzy](previews/3.png)
 
 ---
 
-## ✨ Plugins & Their Purpose
+## ✨ Plugins
 
 Here's a quick human-friendly rundown of the main plugins used in this config and what they do for you:
 
@@ -46,7 +55,7 @@ Here's a quick human-friendly rundown of the main plugins used in this config an
 
 ---
 
-## 🎹 Keymaps Cheatsheet
+## 🎹 Keymaps
 
 Some of the most useful keybindings (custom & plugin-powered):
 
