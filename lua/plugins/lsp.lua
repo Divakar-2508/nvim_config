@@ -30,6 +30,7 @@ return {
             omnisharp = {},
             svelte = {},
             ts_ls = {},
+            bashls = {}
         },
     },
     config = function(_, opts)

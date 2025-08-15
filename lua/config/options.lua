@@ -1,6 +1,5 @@
 vim.opt.fillchars = { eob = " " } -- Replace tildes with spaces on empty lines
 vim.opt.termguicolors = true
-
 -- Set tab width to 4 spaces
 vim.opt.tabstop = 4 -- Number of spaces a tab character represents
 vim.opt.shiftwidth = 4 -- Number of spaces to use for each step of indentation

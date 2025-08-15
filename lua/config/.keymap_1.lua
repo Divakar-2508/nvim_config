@@ -82,42 +82,45 @@ end, { noremap = true, silent = true })
 vim.api.nvim_create_autocmd("LspAttach", {
     callback = function(event)
         local bufnr = event.buf
-        local client = vim.lsp.get_client_by_id(event.data.client_id)
-        if not client then
+        local clients = vim.lsp.buf_get_clients(bufnr)
+        if #clients == 0 then
             return
         end
 
-        -- === Inlay hint message ===
-        if client.server_capabilities.inlayHintProvider then
+        local capabilities = clients[1].server_capabilities
+        if capabilities.inlayHintProvider then
             print("Inlay hints are supported. Use .h to toggle.")
         else
             print("Inlay hints are not supported by the attached LSP server.")
         end
-
-        -- === LSP Keybindings ===
-        local nmap = function(keys, func, desc)
-            vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
-        end
-
-        -- LSP-related keybindings
-        nmap("gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
-        nmap("gr", vim.lsp.buf.references, "[G]oto [R]eferences")
-        nmap("gi", vim.lsp.buf.implementation, "[G]oto [I]mplementation")
-        nmap("K", vim.lsp.buf.hover, "Hover Documentation")
-        nmap("<C-k>", vim.lsp.buf.signature_help, "Signature Help")
-        nmap("<leader>rn", vim.lsp.buf.rename, "[R]e[N]ame")
-        nmap("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
-
-        -- Diagnostics keybindings
-        nmap("[d", vim.diagnostic.goto_prev, "Go to Previous Diagnostic")
-        nmap("]d", vim.diagnostic.goto_next, "Go to Next Diagnostic")
-        nmap("<leader>e", vim.diagnostic.open_float, "[E]rror Details")
-        nmap("<leader>q", vim.diagnostic.setloclist, "[Q]uickfix Diagnostics List")
-
-        -- Format the buffer
-        nmap("<leader>gf", vim.lsp.buf.format, "[F]ormat Document")
     end,
 })
+
+function lsp_bindings()
+    local nmap = function(keys, func, desc)
+        vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
+    end
+
+    -- LSP-related keybindings
+    nmap("gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
+    nmap("gr", vim.lsp.buf.references, "[G]oto [R]eferences")
+    nmap("gi", vim.lsp.buf.implementation, "[G]oto [I]mplementation")
+    nmap("K", vim.lsp.buf.hover, "Hover Documentation")
+    nmap("<C-k>", vim.lsp.buf.signature_help, "Signature Help")
+    nmap("<leader>rn", vim.lsp.buf.rename, "[R]e[N]ame")
+    nmap("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
+
+    -- Diagnostics keybindings
+    nmap("[d", vim.diagnostic.goto_prev, "Go to Previous Diagnostic")
+    nmap("]d", vim.diagnostic.goto_next, "Go to Next Diagnostic")
+    nmap("<leader>e", vim.diagnostic.open_float, "[E]rror Details")
+    nmap("<leader>q", vim.diagnostic.setloclist, "[Q]uickfix Diagnostics List")
+
+    -- Format the buffer
+    nmap("<leader>gf", vim.lsp.buf.format, "[F]ormat Document")
+end
+
+vim.api.nvim_create_autocmd("LspAttach", { callback = lsp_bindings })
 
 local function compile_and_run()
     local file_path = vim.fn.expand("%:p:h") -- Get the directory of the current file
