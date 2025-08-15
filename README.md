@@ -117,7 +117,6 @@ To get the best out of this config, make sure you have these installed on your s
 - **bat** (for pretty file previews in fzf-lua)
 - **rg** (fast grep)
 - **yazi** (terminal file explorer)
-- 
 - **Node.js** & **npm** (some LSPs, formatters, and linters)
 
 Most language servers, formatters, and linters can be installed via `:Mason` inside Neovim!
