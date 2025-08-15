@@ -5,9 +5,9 @@
 ---
 
 ## 🖼️ Preview
-![main](./prev-1.png)
-![yazi](./prev-2.png)
-![fuzzy](./prev-3.png)
+![main](previews/1.png)
+![yazi](previews/2.png)
+![fuzzy](previews/3.png)
 
 ---
 
