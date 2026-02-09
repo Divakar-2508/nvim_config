@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified">
+
+    <!-- Root element -->
+    <xs:element name="project">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="property" minOccurs="0" maxOccurs="unbounded" type="propertyType"/>
+                <xs:element name="target" minOccurs="0" maxOccurs="unbounded" type="targetType"/>
+            </xs:sequence>
+            <xs:attribute name="name" type="xs:string" use="required"/>
+            <xs:attribute name="default" type="xs:string" use="required"/>
+            <xs:attribute name="basedir" type="xs:string" use="optional"/>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Property -->
+    <xs:complexType name="propertyType">
+        <xs:attribute name="name" type="xs:string" use="optional"/>
+        <xs:attribute name="value" type="xs:string" use="optional"/>
+        <xs:attribute name="environment" type="xs:string" use="optional"/>
+    </xs:complexType>
+
+    <!-- Target -->
+    <xs:complexType name="targetType">
+        <xs:sequence>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="echo" type="echoType"/>
+                <xs:element name="mkdir" type="mkdirType"/>
+                <xs:element name="delete" type="deleteType"/>
+                <xs:element name="copy" type="copyType"/>
+                <xs:element name="javac" type="javacType"/>
+                <xs:element name="zip" type="zipType"/>
+                <xs:element name="java" type="javaType"/>
+                <xs:element name="jar" type="jarType"/>
+                <xs:element name="war" type="warType"/> 
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="depends" type="xs:string" use="optional"/>
+    </xs:complexType>
+
+    <!-- Echo -->
+    <xs:complexType name="echoType">
+        <xs:attribute name="message" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <!-- Mkdir -->
+    <xs:complexType name="mkdirType">
+        <xs:attribute name="dir" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <!-- Delete -->
+    <xs:complexType name="deleteType">
+        <xs:attribute name="dir" type="xs:string" use="optional"/>
+        <xs:attribute name="file" type="xs:string" use="optional"/>
+    </xs:complexType>
+
+    <!-- Copy -->
+    <xs:complexType name="copyType">
+        <xs:sequence>
+            <xs:element name="fileset" type="filesetType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="todir" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <!-- Fileset -->
+    <xs:complexType name="filesetType">
+        <xs:sequence>
+            <xs:element name="include" type="includeType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="includes" type="includeType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="dir" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="includeType">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="classpathType">
+        <xs:sequence>
+            <xs:element name="fileset" type="filesetType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Javac -->
+    <xs:complexType name="javacType">
+        <xs:sequence>
+            <xs:element name="classpath" type="classpathType" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="srcdir" type="xs:string" use="required"/>
+        <xs:attribute name="destdir" type="xs:string" use="required"/>
+    <xs:attribute name="includeantruntime" type="xs:boolean" use="optional"/>
+    </xs:complexType>
+
+    <!-- Zip -->
+    <xs:complexType name="zipType">
+        <xs:attribute name="destfile" type="xs:string" use="required"/>
+        <xs:attribute name="basedir" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <!-- Java -->
+    <xs:complexType name="javaType">
+        <xs:attribute name="classname" type="xs:string" use="required"/>
+        <xs:attribute name="classpath" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <!-- Jar -->
+    <xs:complexType name="jarType">
+        <xs:sequence>
+            <xs:element name="manifest" type="manifestType" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="destfile" type="xs:string" use="required"/>
+        <xs:attribute name="basedir" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <!-- Manifest -->
+    <xs:complexType name="manifestType">
+        <xs:sequence>
+            <xs:element name="attribute" type="attributeType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Manifest attribute -->
+    <xs:complexType name="attributeType">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="value" type="xs:string" use="required"/>
+    </xs:complexType>
+    
+    <xs:complexType name="warType">
+        <xs:sequence>
+            <xs:element name="fileset" type="filesetType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="lib" type="libType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="classes" type="classesType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="destfile" type="xs:string" use="required"/>
+        <xs:attribute name="webxml" type="xs:string" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="libType">
+        <xs:attribute name="dir" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="classesType">
+        <xs:attribute name="dir" type="xs:string" use="required"/>
+    </xs:complexType>    
+</xs:schema>
