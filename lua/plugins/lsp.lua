@@ -13,13 +13,15 @@ return {
 							autoSearchPaths = true,
 							useLibraryCodeForTypes = true,
 							diagnosticMode = "workspace",
-							extraPaths = { "." }, -- 👈 add this
+							extraPaths = { "." },
 						},
 					},
 				},
 			},
-			html = {},
-			-- jdtls = {},
+			rust_analyzer = {},
+			html = {
+				filetypes = { "html", "jsp" },
+			},
 			clangd = {
 				cmd = {
 					"clangd",
@@ -28,21 +30,43 @@ return {
 				},
 			},
 			omnisharp = {},
-			svelte = {},
-			ts_ls = {},
+			-- svelte = {},
+			ts_ls = {
+				filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "html", "jsp" },
+			},
 			bashls = {},
+			cssls = {},
+			postgres_lsp = {
+				workspace_required = false,
+			},
+			-- jdtls = {},
 		},
 	},
 	config = function(_, opts)
-		-- require("mason").setup()
+		-- local lspconfig = require("lspconfig")
 
-		local lspconfig = require("lspconfig")
+		-- Configure lemminx for XML schemas
+		vim.lsp.config.lemminx = {
+			filetypes = { "xml", "ant" },
+			settings = {
+				xml = {
+					fileAssociations = {
+						{
+							pattern = "**/build.xml", -- match exactly abc.xml anywhere
+							systemId = vim.fn.expand("~/.config/nvim/schema/ant-custom.xsd"),
+						},
+					},
+				},
+			},
+		}
+		vim.lsp.enable("lemminx")
 
+		-- other servers
 		for server, config in pairs(opts.servers) do
 			config.capabilities = require("blink.cmp").get_lsp_capabilities(config.capabilities)
-			lspconfig[server].setup(config)
+			-- lspconfig[server].setup(config)
+			vim.lsp.config[server] = config
+			vim.lsp.enable(server)
 		end
 	end,
 }
-
--- vim.o.winbar = "%{%v:lua.require'breadcrumb'.get()%}"
